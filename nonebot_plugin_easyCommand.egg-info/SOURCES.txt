@@ -1,0 +1,10 @@
+LICENSE
+README.md
+setup.py
+nonebot_plugin_easyCommand/__init__.py
+nonebot_plugin_easyCommand/utils.py
+nonebot_plugin_easyCommand.egg-info/PKG-INFO
+nonebot_plugin_easyCommand.egg-info/SOURCES.txt
+nonebot_plugin_easyCommand.egg-info/dependency_links.txt
+nonebot_plugin_easyCommand.egg-info/requires.txt
+nonebot_plugin_easyCommand.egg-info/top_level.txt

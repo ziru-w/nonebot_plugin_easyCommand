@@ -1,0 +1,24 @@
+Metadata-Version: 2.1
+Name: nonebot-plugin-easyCommand
+Version: 1.0.0
+Summary: 一款基于NoneBot2的简单的扩充命令的插件。
+Home-page: https://github.com/ziru-w/nonebot_plugin_easyCommand
+Author: wziru
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/ziru-w/nonebot_plugin_easyCommand/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.7
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# nonebot_plugin_easyCommand
+ 一个基于NoneBot2的简单的扩充命令的插件
+
+1.一个长度的起始符+"添加命令","删除命令","查看命令","允许命令","结束命令"分达到如其字意的效果
+2.添加命令后当接收到命令后会自动匹配命令
+3."允许命令","结束命令"默认不开放群无起始符命令白名单，且不存录，为超级管理员游戏做
+4.群聊@、白名单 /且全部匹配 匹配回复，私聊不加起始符匹配回复或加且全部匹配，默认起始符长度都是1,其他都不认
+
