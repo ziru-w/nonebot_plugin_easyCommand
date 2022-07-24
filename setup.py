@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="nonebot_plugin_easyCommand",
-    version="1.0.0",
+    version="1.1.0",
     author="wziru",
     description="一款基于NoneBot2的简单的扩充命令的插件。",
     long_description=long_description,
