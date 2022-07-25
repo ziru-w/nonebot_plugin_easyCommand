@@ -1,5 +1,5 @@
 # nonebot_plugin_easyCommand
- 一个基于NoneBot2的简单的扩充命令的插件
+ 一个基于NoneBot2的简单的用来扩充命令或添加定时任务的插件
 
 一、概述
 
