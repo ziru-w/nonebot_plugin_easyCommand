@@ -1,7 +1,7 @@
 Metadata-Version: 2.1
 Name: nonebot-plugin-easyCommand
-Version: 1.1.0
-Summary: 一款基于NoneBot2的简单的扩充命令的插件。
+Version: 1.1.1
+Summary: 一款基于NoneBot2的简单的用来扩充命令或添加定时任务的插件。
 Home-page: https://github.com/ziru-w/nonebot_plugin_easyCommand
 Author: wziru
 License: UNKNOWN
@@ -15,7 +15,7 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 
 # nonebot_plugin_easyCommand
- 一个基于NoneBot2的简单的扩充命令的插件
+ 一个基于NoneBot2的简单的用来扩充命令或添加定时任务的插件
 
 一、概述
 
@@ -34,7 +34,7 @@ License-File: LICENSE
 
 1.添加命令 标题 内容 内容支持图像、表情、转发、文本
 
-2.删除命令 标题 不支持图像类型的标题
+2.删除命令 标题 不支持图像类型的标题 第一顺位超管输入"#+-*/真的啦已经确认过啦"删除所有命令
 
 3.查看命令 超管输入命令"查看命令全"查看所有命令、普通用户查看自己写的命令，最长皆为前3-400字符长度  如想要都可以全查自行删除约136行处 and uid in superList
 
@@ -48,4 +48,5 @@ License-File: LICENSE
 内容支持同上支持CQ，都不支持视频CQ 
 
 8.删除定时 标题
+
 

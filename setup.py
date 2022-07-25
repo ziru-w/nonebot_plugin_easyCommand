@@ -5,9 +5,9 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="nonebot_plugin_easyCommand",
-    version="1.1.0",
+    version="1.1.1",
     author="wziru",
-    description="一款基于NoneBot2的简单的扩充命令的插件。",
+    description="一款基于NoneBot2的简单的用来扩充命令或添加定时任务的插件。",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ziru-w/nonebot_plugin_easyCommand",
@@ -23,6 +23,7 @@ setup(
     python_requires=">=3.7",
     install_requires = [
         'nonebot-adapter-onebot>=2.0.0-beta.1',
-        'nonebot2>=2.0.0-beta.1'
+        'nonebot2>=2.0.0-beta.1',
+        'nonebot_plugin_apscheduler'
     ]
 )
