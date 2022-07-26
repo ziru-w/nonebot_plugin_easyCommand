@@ -35,4 +35,4 @@
 
 三、致谢
 
-感谢NoneBot、nonebot_plugin_txt2img
+感谢NoneBot、nonebot_plugin_apscheduler、nonebot_plugin_txt2img及其开发者
