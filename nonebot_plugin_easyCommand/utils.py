@@ -7,9 +7,17 @@ from nonebot.adapters.onebot.v11 import MessageSegment
 import re
 import json
 from os.path import dirname,exists
+from nonebot_plugin_txt2img import Txt2Img
+
 path=dirname(__file__) +'/reply.json'
-
-
+async def parseMsg(commandText,resMsg,font_size = 32,isText=1):
+    if len(resMsg)<=300 and isText==1:
+       return resMsg
+    else:
+        title = commandText
+        img = Txt2Img(font_size)
+        pic = img.save(title, resMsg)
+        return MessageSegment.image(pic)
 def getTime():
     sleep(0.001)
     content=time()

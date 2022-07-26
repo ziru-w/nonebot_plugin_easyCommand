@@ -2,7 +2,7 @@ import json
 from os.path import dirname
 from nonebot.adapters.onebot.v11 import Bot,MessageEvent, GroupMessageEvent,PrivateMessageEvent,MessageSegment
 from nonebot import  on_regex, on_command, logger,get_driver,get_bot
-from .utils import getCommandStartList,parseTimeData,path,matchText,addCommand,readReplyTextJson,parseText,getTime,writeFile,getExist
+from .utils import getCommandStartList,parseTimeData,path,matchText,addCommand,readReplyTextJson,parseText,getTime,writeFile,getExist,parseMsg
 import nonebot_plugin_apscheduler
 # 根据配置的参数，注册定时任务,每天发送
 
@@ -134,15 +134,18 @@ async def _(bot: Bot, event: MessageEvent,args: Message = CommandArg()):
         # with open(path,'r',encoding='utf-8') as fp:
         #     replyTextJson = json.loads(fp.read())
         if '全' in argsText and uid in superList:
-            await addLiaotian.send('列表\n{}'.format(replyTextKeyList)[:400].replace("', '",'\t'))
+            await addLiaotian.send('正在绘制图片，请稍等。。。')
+            msg=await parseMsg(commandText,'列表:\n{}'.format(replyTextKeyList).replace("', '",'\t'),isText=0)
+            await addLiaotian.finish(msg)
         else:
             with open(path,'r',encoding='utf-8') as fp:
                 replyTextJson = json.loads(fp.read())
             commandList=[]
-            for reply in replyTextJson.keys():
-                if reply['creatorId']==int(uid):
-                    commandList.append(reply)
-            await addLiaotian.send('列表\n{}'.format(commandList)[:400].replace("', '",''))
+            for title in replyTextJson.keys():
+                if replyTextJson[title]['creatorId']==int(uid):
+                    commandList.append(title)
+            msg=await parseMsg(commandText,'列表:\n{}'.format(commandList).replace("', '",'\t'),isText=1)
+            await addLiaotian.finish(msg)
         return
     if '允许' in commandText and uid in superList:
         existKey=(id in allowGroupList)

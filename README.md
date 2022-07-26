@@ -32,3 +32,7 @@
 内容支持同上支持CQ，都不支持视频CQ 
 
 8.删除定时 标题
+
+三、致谢
+
+感谢NoneBot、nonebot_plugin_txt2img
