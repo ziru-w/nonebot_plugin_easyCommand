@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "nonebot_plugin_easyCommand"
+version = "1.1.4"
+description = "一款基于NoneBot2的简单的用来扩充命令或添加定时任务的插件。"
+authors = ["ziru-w <77319678+ziru-w@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "nonebot_plugin_easyCommand"}]
+
+[tool.poetry.dependencies]
+python = "^3.6"
+nonebot-adapter-onebot=">=2.0.0-beta.1"
+nonebot2=">=2.0.0-beta.1"
+nonebot_plugin_apscheduler="*"
+nonebot_plugin_txt2img="*"
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

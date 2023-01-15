@@ -1,6 +1,6 @@
 
 
-from datetime import datetime
+from datetime import datetime,timedelta
 from time import sleep,time
 from nonebot import get_driver
 from nonebot.adapters.onebot.v11 import MessageSegment
@@ -10,36 +10,13 @@ from os.path import dirname,exists
 from nonebot_plugin_txt2img import Txt2Img
 
 path=dirname(__file__) +'/reply.json'
-async def parseMsg(commandText,resMsg,font_size = 32,isText=1):
-    if len(resMsg)<=300 and isText==1:
-       return resMsg
-    else:
-        title = commandText
-        img = Txt2Img(font_size)
-        pic = img.save(title, resMsg)
-        return MessageSegment.image(pic)
+cdTime=2
+
 def getTime():
-    sleep(0.001)
+    sleep(0.00001)
     content=time()
     content=str(content)
     return content
-
-def getCommandStartList(n='')->list:
-    command_start=list(get_driver().config.command_start)
-    if len(command_start)==0:
-        command_start=['']
-    else:
-        if n!='':
-            command_start=command_start[:n]
-    return command_start
-    
-def parseDifferentCommandStart(text):
-    lenght=len(getCommandStartList()[0])
-    if lenght==0:
-        text='/'+text
-    else:
-        text='/'+text[lenght:]
-    return text
 
 def readReplyTextJson(path=path,content={}):
     if not exists(path):
@@ -52,44 +29,63 @@ def writeFile(path,content):
     with open(path,'w',encoding='utf-8') as fp:
         json.dump(content,fp,ensure_ascii=False)
 
-def addCommand(plaintext,inText,replyTextKeyList:list,creatorId=-1):
+def addCommand(plaintext,inText,replyTextJson,creatorId=-1):
     replyKey='reply'
     creatorIdKey="creatorId"
     datetimeKey='datetime'
     #输入
     if inText!='':
-        replyTextJson=readReplyTextJson()
         plaintext=plaintext[:400].replace('amp;','').replace('&#91;','[').replace('&#93;',']')
         inText=inText[:400].replace('amp;','').replace('&#91;','[').replace('&#93;',']')
-        replyTextJson[plaintext]={replyKey:inText,creatorIdKey:creatorId,datetimeKey:str(datetime.now())}
-        with open(path,'w',encoding='utf-8') as fp:
-            json.dump(replyTextJson,fp,ensure_ascii=False)
-        replyTextKeyList.append(plaintext)
+        plaintext=parseImage(plaintext)
+        replyTextJson[plaintext]={replyKey:inText,creatorIdKey:creatorId,datetimeKey:str(datetime.now() - timedelta(minutes=10))}
         return '{}:\n{}'.format(plaintext,replyTextJson[plaintext][replyKey])
     return '怪'
 
 
-def matchText(plaintext:str,creatorId=-1):
-    replyTextJson=readReplyTextJson()
+def parseImage(text):
+    urlList=re.findall('\[CQ:image,file=.+?,url=(http.+?)]',text)
+    if len(urlList)!=0:
+        for url in urlList:
+            text=text.replace(url,'')
+    return text
+def cd(reply):
+    if  reply!=None:
+        print(reply['datetime'])
+        old=datetime.strptime(reply['datetime'],"%Y-%m-%d %H:%M:%S.%f")
+        now=datetime.now()
+        if (now-old).seconds<cdTime:
+            return 'cd冷却中'
+        else:
+            reply['datetime']=str(now)
+            return ''
+    return ''
+replyTextJson=readReplyTextJson()
+def matchText(plaintext:str,replyTextJson,keyLen=3):
+    # print(replyTextJson)
+    # replyTextJson=readReplyTextJson()
+    
+    print(replyTextJson.get(plaintext))
     #输出
     # print(plaintext,'amp;')
     plaintext=plaintext[:400].replace('amp;','').replace('&#91;','[').replace('&#93;',']')
     # print(plaintext)
     replyText=''
     creatorIdKey="creatorId"
-    
     # print(replyTextJson.get(plaintext))
     # print(plaintext,62)
+    plaintext=parseImage(plaintext)
     if replyTextJson.get(plaintext)==None:
         for replyKey in replyTextJson.keys():
-            if plaintext in replyKey and len(plaintext)*2>=len(replyKey) and len(plaintext)>=3:
+            if plaintext in replyKey and len(plaintext)*2>=len(replyKey) and len(plaintext)>=keyLen:#键长>=3，且占比>=比较键长1/2
                 plaintext=replyKey
                 break
-    
+    if cd(replyTextJson.get(plaintext))=='cd冷却中':
+        return 'cd冷却中'
     if replyTextJson.get(plaintext)==None:
         return replyText
     replyText=replyTextJson[plaintext]['reply']
-        
+    
     return parseText(replyText)
     # if '[CQ:image,' in replyText:
     #     urlList=re.findall('(http.+?)]',replyText)
@@ -103,8 +99,7 @@ def matchText(plaintext:str,creatorId=-1):
 
 
 
-def parseText(replyText:str):
-    maxImage=10
+def parseText(replyText:str,maxImage=10):#免得图像太多，费流量
     msg=''
     print(time())
     if '[CQ:' not in replyText:
@@ -144,67 +139,79 @@ def parseText(replyText:str):
     return msg+replyText
 
 def getExist(plainCommandtext:str,wholeMessageText:str,argsText:str):
-    commandText=wholeMessageText.replace(argsText,'').strip()
+    commandText=wholeMessageText[::-1].replace(argsText[::-1],'',1)[::-1].strip()
     if plainCommandtext=='':
         return commandText
     else:
         return plainCommandtext in commandText
 
 
-def parseTimeArea(x,i):
-    if i=='h':
-        if x>24 or x<0:
+
+def parseTimeArea(inputTime,timeType):
+    if timeType=='h':
+        if inputTime>24 or inputTime<0:
             return False
     else:
-        if x>59 or x<0:
+        if inputTime>59 or inputTime<0:
             return False
     return True
 
-def parseNum(x:str,i:str,op):
+def parseNum(inputTime:str,timeType:str,cornType):
     '1,*/2,0-59,*'
-    if i==0:
-        i='h'
+    if timeType==0:
+        timeType='h'
     else:
-        i='noH'
-    if op==0:
-        x=int(x)
-        if not parseTimeArea(x,i):
+        timeType='noH'
+    if cornType==0:
+        inputTime=int(inputTime)
+        if not parseTimeArea(inputTime,timeType):
             return False
-        return str(x)
-    elif op==1:
-        x=int(x[2:])
-        if x<1:
+        return str(inputTime)
+    elif cornType==1:
+        inputTime=int(inputTime[2:])
+        if inputTime<1:
             return False
-        return '*/{}'.format(x)
-    elif op==2:
-        x=x.split('-')
+        return '*/{}'.format(inputTime)
+    elif cornType==2:
+        inputTime=inputTime.split('-')
         temp=''
-        for index,tempi in enumerate(x):
-            if not parseTimeArea(x[index],i):
+        for index,tempi in enumerate(inputTime):
+            if not parseTimeArea(inputTime[index],timeType):
                 return False
-            temp=temp+x[index]+'-'
+            temp=temp+inputTime[index]+'-'
         return temp[:-1]
-    return x
+    return inputTime
 
 
 def parseTimeData(time:list,isSuper:False):
     pattern=["^[0-9]{1,2}$", "^[*][/][0-9]{1,2}$","^[0-9]{1,2}-[0-9]{1,2}$","^[*]$"]
     print(time)
     errorData=-1
-    for i,x in enumerate(time):
-        for op,patterni in enumerate(pattern):
-            select=re.match(patterni,x)
+    for i,inputTime in enumerate(time):
+        for cornType,patterni in enumerate(pattern):
+            select=re.match(patterni,inputTime)
             if select:
-                isCorrect=parseNum(x,i,op)
+                isCorrect=parseNum(inputTime,i,cornType)
                 if not isCorrect:
                     errorData=i
                     return errorData #收束数据超限
                 time[i]=isCorrect
                 break # 真，结束循环
-            if (op==0 and not isSuper) or op+1==len(pattern): # 成功即break,故至此者非第一个匹配非超管F或最后一轮仍未break，判错
+            if (cornType==0 and not isSuper) or cornType+1==len(pattern): # 成功即break,故至此者非第一个匹配非超管F或最后一轮仍未break，判错
                 errorData=i
                 return errorData #收束未匹配
     return errorData # 全成功
+
+
+async def parseMsg(commandText,resMsg,font_size = 32,isText=1):
+    if len(resMsg)<=300 and isText==1:
+       return resMsg
+    else:
+        title = commandText
+        img = Txt2Img(font_size)
+        pic = img.save(title, resMsg)
+        return MessageSegment.image(pic)
+
 
 # def parseTimeData(time:list,isSuper:False):
 #     # patternH="^[0-9]$|^[1][0-9]|^[2][0-4]$" 
